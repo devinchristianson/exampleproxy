@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+
+  proxy:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy/nginxconfig:/etc/nginx/conf.d
+    networks:
+      - app-network
+    command: [nginx, '-g', 'daemon off;']
+  certbot:
+    image: certbot/dns-cloudflare
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+volumes:
+  certbot-etc:
+networks:
+  app-network:
